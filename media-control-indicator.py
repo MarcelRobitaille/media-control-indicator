@@ -18,7 +18,6 @@ from gi.repository.GdkPixbuf import InterpType, Pixbuf
 
 class MediaControlIndicator(Gtk.Application):
     def __init__(self):
-        self.status = None
         self.albumart_data = None
 
         self.indicator = AppIndicator3.Indicator.new(
@@ -88,11 +87,11 @@ class MediaControlIndicator(Gtk.Application):
         return GLib.SOURCE_CONTINUE
 
     def set_icon(self):
-        self.status = self.player.get_property('status')
-        if self.status == 'Playing':
-            self.indicator.set_icon_full('media-playback-start', 'Playing')
-        elif self.status == 'Paused':
+        status = self.player.get_property('status')
+        if status == 'Playing':
             self.indicator.set_icon_full('media-playback-pause', 'Paused')
+        elif status == 'Paused':
+            self.indicator.set_icon_full('media-playback-start', 'Playing')
         else:
             self.indicator.set_icon_full('media-playback-stop', 'Stopped')
         return GLib.SOURCE_CONTINUE
@@ -167,15 +166,15 @@ class MediaControlIndicator(Gtk.Application):
 
     def set_buttons(self):
         self.player = Playerctl.Player()
-        self.status = self.player.get_property('status')
-        if self.status == 'Playing':
+        status = self.player.get_property('status')
+        if status == 'Playing':
             self.play_button.set_sensitive(True)
             self.next_button.set_sensitive(True)
             self.previous_button.set_sensitive(True)
             self.play_button.set_label('Pause')
             self.play_button \
                 .set_image(image=Gtk.Image(stock=Gtk.STOCK_MEDIA_PAUSE))
-        elif self.status == 'Paused':
+        elif status == 'Paused':
             self.play_button.set_sensitive(True)
             self.next_button.set_sensitive(True)
             self.previous_button.set_sensitive(True)
